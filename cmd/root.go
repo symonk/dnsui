@@ -1,16 +1,18 @@
 /*
 Copyright © 2025 symonk
-
 */
 package cmd
 
 import (
+	"fmt"
 	"os"
 
+	tea "github.com/charmbracelet/bubbletea"
+
 	"github.com/spf13/cobra"
+	"github.com/symonk/dnsui/internal/dns"
+	"github.com/symonk/dnsui/internal/gui"
 )
-
-
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -24,7 +26,14 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		checker := dns.New()
+		p := tea.NewProgram(gui.New(checker))
+		if _, err := p.Run(); err != nil {
+			fmt.Printf("there has been an error: %v", err)
+			os.Exit(1)
+		}
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -47,5 +56,3 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
-
-
